@@ -353,7 +353,7 @@ def section_contact():
             else:
                 st.success("Thanks! Your message has been recorded.")
                 st.write({"name": name, "email": email, "message": message})
-    st.markdown("Connect: [LinkedIn](https://www.linkedin.com/) | [GitHub](https://github.com/) | [Email](mailto:example@email.com)")
+    st.markdown("Connect: [LinkedIn](https://www.linkedin.com/in/abhiroop-bhattacharyya-b3761414b/) | [GitHub](https://github.com/TechMaverickHub) | [Email](mailto:abhiroop1998.dev@gmail.com)")
 
 
 # -----------------------
