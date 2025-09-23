@@ -349,7 +349,15 @@ def section_certifications(query: str):
             "issuer": "100x",
         },
         {
-            "name": "Coursera: Python for Data Science, Methodology, Tools",
+            "name": "Python for Data Science",
+            "issuer": "Coursera",
+        },
+        {
+            "name": "Data Science Methodology",
+            "issuer": "Coursera",
+        },
+        {
+            "name": "Tools for Data Science",
             "issuer": "Coursera",
         },
     ]
