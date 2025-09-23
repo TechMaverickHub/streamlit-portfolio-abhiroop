@@ -294,28 +294,51 @@ def section_experience(query: str):
         {
             "role": "Backend Developer",
             "company": "Divergenic Tech Solutions",
-            "period": "2023 – Present",
-            "desc": "Built APIs and services, improved reliability and performance.",
+            "period": "Jul 2023 – Present",
+            "desc": [
+                "Migrated legacy Node.js APIs to Django REST and redesigned endpoints, reducing API response times by 30% and improving client dashboards.",
+                "Optimized database queries and refactored endpoints, enhancing performance and scalability.",
+                "Integrated PostgreSQL and MongoDB, implemented RBAC, and configured AWS S3 storage for secure, scalable multiuser chart sharing.",
+                "Designed end-to-end dashboard features with monitoring and role-based access to support production use.",
+            ],
         },
         {
             "role": "Backend Developer Intern",
             "company": "Yatra",
-            "period": "2022 – 2023",
-            "desc": "Contributed to backend modules and integrations.",
+            "period": "Jun 2022 – Jun 2023",
+            "desc": [
+                "Built a Spring AOP-based logging system to improve monitoring and audits.",
+                "Tracked request/response data and performance metrics, reducing response analysis time by 25%.",
+                "Enabled real-time method call tracking, improving debugging efficiency by 30%.",
+                "Improved system reliability during peak traffic, minimizing downtime of critical services.",
+            ],
         },
     ]
 
+
+    def desc_to_text(desc):
+        if isinstance(desc, list):
+            return " ".join(desc)
+        return str(desc)
+
     combined = " ".join([
-        f"{e['role']} {e['company']} {e['period']} {e['desc']}" for e in experiences
+        f"{e['role']} {e['company']} {e['period']} {desc_to_text(e['desc'])}" for e in experiences
     ])
     if not matches_query(combined, query):
         return
 
     section_header("Experience")
     for e in experiences:
+        # Build markdown body allowing bullet points
+        if isinstance(e["desc"], list):
+            bullets = "\n".join([f"- {item}" for item in e["desc"]])
+            body = f"{e['period']}\n\n{bullets}"
+        else:
+            body = f"{e['period']}\n\n{e['desc']}"
+
         render_card(
             f"{e['role']} — {e['company']}",
-            f"{e['period']}\n\n{e['desc']}",
+            body,
         )
 
 
