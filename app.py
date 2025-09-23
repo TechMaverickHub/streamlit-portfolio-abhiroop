@@ -166,7 +166,7 @@ def set_nav(target_title: str):
     except Exception:
         pass
 
-menu_cols = st.columns([1, 1, 1, 1, 1, 1])
+menu_cols = st.columns([1, 1, 1, 1, 1])
 if menu_cols[0].button("Home", use_container_width=True):
     set_nav("Home")
 if menu_cols[1].button("About", use_container_width=True):
@@ -177,15 +177,6 @@ if menu_cols[3].button("Skills", use_container_width=True):
     set_nav("Skills")
 if menu_cols[4].button("Contact", use_container_width=True):
     set_nav("Contact")
-with menu_cols[5]:
-    if resume_bytes:
-        st.download_button(
-            label="Download Resume",
-            data=resume_bytes,
-            file_name=resume_path.name,
-            mime="application/pdf",
-            use_container_width=True,
-        )
 
 nav = st.session_state["nav"]
 global_query = ""
@@ -207,13 +198,6 @@ def section_home():
         st.write(
             "I build reliable backend systems and increasingly apply ML to create data-driven features."
         )
-        if resume_bytes:
-            st.download_button(
-                label="Download Resume",
-                data=resume_bytes,
-                file_name=resume_path.name,
-                mime="application/pdf",
-            )
     with right:
         st.metric("Years Experience", "2+")
         st.metric("Projects", "5+")
@@ -238,6 +222,17 @@ def section_about(query: str):
     if not matches_query(content, query):
         return
     section_header("About")
+    # Resume download beside About
+    if resume_bytes:
+        top_cols = st.columns([3, 1])
+        with top_cols[1]:
+            st.download_button(
+                label="Download Resume",
+                data=resume_bytes,
+                file_name=resume_path.name,
+                mime="application/pdf",
+                use_container_width=True,
+            )
     st.write(content)
 
 
