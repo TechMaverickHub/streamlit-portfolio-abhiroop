@@ -292,14 +292,22 @@ def section_projects(query: str):
             "title": "Credit Risk Predictor",
             "desc": "Streamlit app powered by XGBoost to predict credit default probability.",
             "tags": ["XGBoost", "Streamlit", "ML"],
-            "links": [("Repo", "https://github.com/"), ("Live", "https://share.streamlit.io/")],
+            "links": [("Repo", "https://github.com/TechMaverickHub/credit-risk-predictor-streamlit")],
         },
         {
             "title": "Mall Customer Segmentation",
             "desc": "K-Means clustering with interactive visualizations to explore customer groups.",
             "tags": ["K-Means", "Visualization", "Python"],
-            "links": [("Repo", "https://github.com/")],
+            "links": [("Repo", "https://github.com/TechMaverickHub/Mall-Customer-Segmentation-using-K-Means-Clustering")],
         },
+        {
+            "title": "100x-LLM-Week2 PDF Chatbot Frontend",
+            "desc": "Streamlit frontend for an interactive PDF chatbot powered by FastAPI backend.",
+            "tags": ["Streamlit", "FastAPI", "LLM"],
+            "links": [
+                ("Repo", "https://github.com/TechMaverickHub/100x-LLM-week2-pdf-chatbot-ui")
+            ],
+        }
     ]
 
     # Filter by search query
