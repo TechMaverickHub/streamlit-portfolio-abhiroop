@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 # -----------------------
@@ -11,7 +12,7 @@ st.set_page_config(
     page_title="Abhiroop Bhattacharyya | Portfolio",
     page_icon="🎯",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 
@@ -30,8 +31,19 @@ def inject_global_css():
         """
         <style>
         /* Ensure pages are scrollable */
-        html, body, [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"], .block-container {
+        html, body {
+            height: 100%;
             overflow-y: auto !important;
+            scroll-behavior: smooth;
+        }
+        [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"], .block-container {
+            overflow-y: auto !important;
+            overflow-x: visible !important;
+        }
+
+        /* Ensure anchored sections have some top margin when scrolled to */
+        #home, #about, #projects, #skills, #contact {
+            scroll-margin-top: 80px;
         }
 
         /* Layout tuning */
@@ -93,6 +105,10 @@ def section_header(title: str, subtitle: str | None = None):
     st.divider()
 
 
+def insert_anchor(anchor_id: str):
+    st.markdown(f'<div id="{anchor_id}"></div>', unsafe_allow_html=True)
+
+
 def matches_query(text: str, query: str) -> bool:
     if not query:
         return True
@@ -115,50 +131,69 @@ def render_card(title: str, body: str, tags: List[str] | None = None, links: Lis
 
 
 # -----------------------
-# Sidebar (Navigation + Search)
+# Global CSS + Top Navigation
 # -----------------------
-with st.sidebar:
-    # Inject CSS once at app start
-    inject_global_css()
+inject_global_css()
 
-    # Profile image in the sidebar
-    profile_img_path = Path("assets/images/profile_picture.png")
-    if profile_img_path.exists():
-        st.image(str(profile_img_path), width=120)
-    st.title("👋 Hi, I'm Abhiroop")
-    st.caption("Backend Developer — Aspiring ML & Data Science Engineer")
-    st.divider()
+# Resume (used in header and Home)
+resume_path = Path("assets/resume/Abhiroop_Bhattacharyya_DataScience_Resume.pdf")
+resume_bytes = load_file_bytes(resume_path)
 
-    # Global search input
-    global_query = st.text_input("Search portfolio", placeholder="Search projects, skills, experience…")
+# Simple header menu
+if "nav" not in st.session_state:
+    st.session_state["nav"] = "Home"
 
-    st.divider()
-    st.subheader("Navigate")
-    nav = st.radio(
-        label="Go to",
-        options=[
-            "Home",
-            "About Me",
-            "Skills",
-            "Projects",
-            "Experience",
-            "Certifications",
-            "Contact Me",
-        ],
-        label_visibility="collapsed",
-    )
+section_from_query = None
+try:
+    section_from_query = (st.query_params.get("section") or "").strip().lower()
+except Exception:
+    section_from_query = None
 
-    st.divider()
-    st.markdown("**Links**")
-    st.link_button("GitHub", "https://github.com/")
-    st.link_button("LinkedIn", "https://www.linkedin.com/")
+map_to_title = {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact",
+}
+if section_from_query in map_to_title:
+    st.session_state["nav"] = map_to_title[section_from_query]
+
+def set_nav(target_title: str):
+    st.session_state["nav"] = target_title
+    try:
+        st.query_params["section"] = target_title.lower()
+    except Exception:
+        pass
+
+menu_cols = st.columns([1, 1, 1, 1, 1, 1])
+if menu_cols[0].button("Home", use_container_width=True):
+    set_nav("Home")
+if menu_cols[1].button("About", use_container_width=True):
+    set_nav("About")
+if menu_cols[2].button("Projects", use_container_width=True):
+    set_nav("Projects")
+if menu_cols[3].button("Skills", use_container_width=True):
+    set_nav("Skills")
+if menu_cols[4].button("Contact", use_container_width=True):
+    set_nav("Contact")
+with menu_cols[5]:
+    if resume_bytes:
+        st.download_button(
+            label="Download Resume",
+            data=resume_bytes,
+            file_name=resume_path.name,
+            mime="application/pdf",
+            use_container_width=True,
+        )
+
+nav = st.session_state["nav"]
+global_query = ""
 
 
 # -----------------------
 # Content Sections
 # -----------------------
-resume_path = Path("assets/resume/Abhiroop_Bhattacharyya_DataScience_Resume.pdf")
-resume_bytes = load_file_bytes(resume_path)
 
 
 def section_home():
@@ -202,7 +237,7 @@ def section_about(query: str):
     )
     if not matches_query(content, query):
         return
-    section_header("About Me")
+    section_header("About")
     st.write(content)
 
 
@@ -372,7 +407,7 @@ def section_certifications(query: str):
 
 
 def section_contact():
-    section_header("Contact Me")
+    section_header("Contact")
     with st.form("contact_form", clear_on_submit=True):
         name = st.text_input("Your Name")
         email = st.text_input("Email")
@@ -388,27 +423,48 @@ def section_contact():
 
 
 # -----------------------
-# Router
+# Single-page layout: render all sections in order
 # -----------------------
-if nav == "Home":
-    section_home()
-    section_about(global_query)
-    section_skills(global_query)
-    section_projects(global_query)
-    section_experience(global_query)
-    section_certifications(global_query)
-elif nav == "About Me":
-    section_about(global_query)
-elif nav == "Skills":
-    section_skills(global_query)
-elif nav == "Projects":
-    section_projects(global_query)
-elif nav == "Experience":
-    section_experience(global_query)
-elif nav == "Certifications":
-    section_certifications(global_query)
-elif nav == "Contact Me":
-    section_contact()
+insert_anchor("home")
+section_home()
+
+insert_anchor("about")
+section_about(global_query)
+
+insert_anchor("projects")
+section_projects(global_query)
+
+insert_anchor("skills")
+section_skills(global_query)
+
+insert_anchor("contact")
+section_contact()
+
+# Smooth scroll to selected section after render
+target_map = {
+    "Home": "home",
+    "About": "about",
+    "Projects": "projects",
+    "Skills": "skills",
+    "Contact": "contact",
+}
+target_id = target_map.get(nav)
+if target_id:
+    components.html(
+        f"""
+        <script>
+        (function() {{
+          function scrollNow() {{
+            var el = window.parent ? window.parent.document.getElementById('{target_id}') : document.getElementById('{target_id}');
+            if (!el) {{ el = document.getElementById('{target_id}'); }}
+            if (el) {{ el.scrollIntoView({{behavior: 'smooth', block: 'start'}}); }}
+          }}
+          setTimeout(scrollNow, 100);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
 
 
 # Footer
