@@ -187,8 +187,18 @@ def section_home():
 
 def section_about(query: str):
     content = (
-        "Professional summary highlighting backend expertise and a transition to AI/ML. "
-        "Education: M.Tech in Data Science, B.Tech in CS."
+        "I'm a software developer with 3+ years of experience building robust, scalable backend systems, "
+        "and I'm now looking to transition into applied data science roles. With an M.Tech in Data Science "
+        "and a strong foundation in Python, Django, and REST APIs, I bring solid engineering skills to "
+        "data-driven problem-solving.\n\n"
+        "Recently, I've been bridging the gap between backend engineering and machine learning—deploying ML "
+        "models, designing API-first ML pipelines, and experimenting with tools like LangChain, Hugging Face, "
+        "and MLflow.\n\n"
+        "I'm also working on diffusion models (SDXL, Flux) and generative AI workflows including text-to-image, "
+        "image-to-image, and image-to-video—exploring how cutting-edge models can be applied in real-world "
+        "intelligent systems.\n\n"
+        "I'm especially interested in opportunities where I can apply data science and AI techniques to solve "
+        "complex problems at scale while continuing to grow as an applied AI engineer."
     )
     if not matches_query(content, query):
         return
@@ -196,32 +206,54 @@ def section_about(query: str):
     st.write(content)
 
 
+def render_skill_bar(skill_name: str, percentage: int, experience: str):
+    """Render a skill with progress bar and experience in two columns"""
+    col1, col2 = st.columns([2, 3])
+    with col1:
+        st.markdown(f"**{skill_name}**")
+        st.caption(f"{experience}")
+    with col2:
+        st.progress(percentage / 100)
+        st.caption(f"{percentage}%")
+
 def section_skills(query: str):
-    skills_backend = ["Python", "SQL", "Java", "Django", "DRF", "FastAPI", "Flask"]
-    skills_ml = [
-        "Scikit-learn",
-        "TensorFlow",
-        "PyTorch",
-        "XGBoost",
-        "Hugging Face",
-        "MLflow",
-        "Streamlit",
-        "Databases",
-        "AWS S3",
+    # Define skills with their details
+    skills_data = [
+        {"name": "Django", "percentage": 90, "experience": "3 years"},
+        {"name": "Python", "percentage": 90, "experience": "3 years"},
+        {"name": "Software Development", "percentage": 90, "experience": "3 years"},
+        {"name": "PostgreSQL", "percentage": 90, "experience": "3 years"},
+        {"name": "Scikit-learn", "percentage": 85, "experience": "2 years"},
+        {"name": "ETL", "percentage": 85, "experience": "2 years"},
+        {"name": "TensorFlow", "percentage": 70, "experience": "1 year"},
+        {"name": "FastAPI", "percentage": 40, "experience": "<1 year"},
     ]
 
-    combined_text = " ".join(skills_backend + skills_ml)
+    combined_text = " ".join([skill["name"] for skill in skills_data])
     if not matches_query(combined_text, query):
         return
 
     section_header("Skills", "Tech I use and enjoy")
-    b1, b2 = st.columns(2)
-    with b1:
-        st.markdown("**Backend**")
-        st.write(", ".join(skills_backend))
-    with b2:
-        st.markdown("**ML/DS & Tools**")
-        st.write(", ".join(skills_ml))
+    
+    # Create 2 columns for skills
+    col1, col2 = st.columns(2)
+    
+    # Split skills into two groups
+    mid_point = len(skills_data) // 2
+    left_skills = skills_data[:mid_point]
+    right_skills = skills_data[mid_point:]
+    
+    # Render left column skills
+    with col1:
+        for skill in left_skills:
+            render_skill_bar(skill["name"], skill["percentage"], skill["experience"])
+            st.write("")  # Add some spacing between skills
+    
+    # Render right column skills
+    with col2:
+        for skill in right_skills:
+            render_skill_bar(skill["name"], skill["percentage"], skill["experience"])
+            st.write("")  # Add some spacing between skills
 
 
 def section_projects(query: str):
