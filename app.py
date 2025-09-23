@@ -1,4 +1,3 @@
-import base64
 from pathlib import Path
 from typing import List
 
@@ -23,6 +22,68 @@ def load_file_bytes(file_path: Path) -> bytes:
     if not file_path.exists():
         return b""
     return file_path.read_bytes()
+
+
+def inject_global_css():
+    """Injects global CSS to enhance visuals and fix scrolling issues."""
+    st.markdown(
+        """
+        <style>
+        /* Ensure pages are scrollable */
+        html, body, [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"], .block-container {
+            overflow-y: auto !important;
+        }
+
+        /* Layout tuning */
+        .block-container {
+            max-width: 1200px;
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        /* Headings */
+        h1, h2, h3, h4 { font-weight: 700; }
+        h2 { border-bottom: 1px solid #eaecef; padding-bottom: .25rem; }
+
+        /* Code-like tags used for skill chips */
+        .markdown code {
+            background: #f4f6f8;
+            color: #444;
+            border-radius: 14px;
+            padding: 2px 8px;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        /* Buttons */
+        .stButton>button, .stDownloadButton>button, .stLinkButton>button {
+            border-radius: 10px;
+            padding: .6rem 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+        }
+
+        /* Containers (approximate styling for st.container) */
+        [data-testid="stVerticalBlock"] > div:has([data-testid="stContainer"]),
+        [data-testid="stContainer"] {
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.06);
+            background: white;
+        }
+
+        /* Sidebar avatar */
+        .sidebar-avatar {
+            display: block;
+            margin: 0 auto 12px auto;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(0,0,0,.15);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def section_header(title: str, subtitle: str | None = None):
@@ -57,6 +118,13 @@ def render_card(title: str, body: str, tags: List[str] | None = None, links: Lis
 # Sidebar (Navigation + Search)
 # -----------------------
 with st.sidebar:
+    # Inject CSS once at app start
+    inject_global_css()
+
+    # Profile image in the sidebar
+    profile_img_path = Path("assets/images/profile_picture.png")
+    if profile_img_path.exists():
+        st.image(str(profile_img_path), width=120)
     st.title("👋 Hi, I'm Abhiroop")
     st.caption("Backend Developer — Aspiring ML & Data Science Engineer")
     st.divider()
