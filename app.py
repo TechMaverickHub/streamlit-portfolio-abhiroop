@@ -102,7 +102,7 @@ def section_header(title: str, subtitle: str | None = None):
     st.markdown(f"## {title}")
     if subtitle:
         st.caption(subtitle)
-    st.divider()
+    # st.divider()
 
 
 def insert_anchor(anchor_id: str):
@@ -203,67 +203,11 @@ def go_contact():
 # Content Sections
 # -----------------------
 
-
-# def section_home():
-    section_header("Home")
-    hero = st.container(border=True)
-    with hero:
-        col_img, col_text = st.columns([1, 2])
-
-        # Profile image
-        with col_img:
-            profile_img_path = Path("assets/images/profile_picture.png")
-            if profile_img_path.exists():
-                with open(profile_img_path, "rb") as image_file:
-                    encoded = base64.b64encode(image_file.read()).decode()
-                st.markdown(
-                    f"<img src='data:image/png;base64,{encoded}' "
-                    "style='width: 100%; max-width: 180px; border-radius: 50%;"
-                    "box-shadow: 0 4px 14px rgba(0,0,0,.12);' />",
-                    unsafe_allow_html=True,
-                )
-
-        # Intro and highlights
-        with col_text:
-            st.markdown("""
-            ### Abhiroop Bhattacharyya
-            Backend Developer → Applied ML & Data Science
-            """)
-            st.write(
-                "I craft robust backend systems and build data-driven features powered by ML. I enjoy shipping reliable APIs, optimizing data flows, and applying AI pragmatically to real problems."
-            )
-
-            # Quick highlights inspired by About/Experience
-            st.markdown(
-                "- Reduced API latency by 30% migrating Node.js → Django REST\n"
-                "- Built RBAC, PostgreSQL/Mongo integrations, and S3-backed data workflows\n"
-                "- Exploring LLM apps, ML pipelines, and generative workflows"
-            )
-
-            # Top skills chips
-            st.caption("Core stack")
-            st.markdown("`Python` `Django` `REST APIs` `PostgreSQL` `Scikit-learn` `ETL`")
-
-            # CTAs
-            cta1, cta2 = st.columns([1, 1])
-            with cta1:
-                st.button("View Projects", use_container_width=True, on_click=go_projects)
-            with cta2:
-                st.button("Get in Touch", use_container_width=True, on_click=go_contact)
-
-    # Metrics row
-    m1, m2, m3 = st.columns(3)
-    with m1:
-        st.metric("Years Experience", "2+")
-    with m2:
-        st.metric("Projects", "5+")
-    with m3:
-        st.metric("Certifications", "3+")
 def section_home():
     section_header("Home")
     hero = st.container(border=True)
     with hero:
-        col_img, col_text = st.columns([1, 2])
+        col_img, col_text = st.columns([1, 2], gap="large")
 
         with col_img:
             profile_img_path = Path("assets/images/profile_picture.png")
@@ -272,9 +216,9 @@ def section_home():
                     encoded = base64.b64encode(image_file.read()).decode()
                 st.markdown(
                     f"""
-                    <div style="display: flex; justify-content: center;">
-                        <img src="data:image/png;base64,{encoded}" 
-                        style="width:140px; height:140px; border-radius:50%; box-shadow:0 4px 14px rgba(0,0,0,.12); margin-bottom: 10px;" />
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                        <img src="data:image/png;base64,{encoded}"
+                        style='width:100%; max-width: 280px; aspect-ratio:1/1; border-radius:50%; box-shadow:0 4px 24px rgba(0,0,0,.18); margin:40px auto;' />
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -284,13 +228,12 @@ def section_home():
             st.markdown(
                 """
                 ## Abhiroop Bhattacharyya  
-                *Backend Developer → Applied ML & Data Science*  
+                *Backend Developer → Applied ML & Data Science*
                 """
             )
             st.write(
                 "I craft robust backend systems and build data-driven features powered by ML. I enjoy shipping reliable APIs, optimizing data flows, and applying AI pragmatically to real problems."
             )
-
             st.markdown(
                 """
                 #### Key Highlights  
@@ -299,7 +242,6 @@ def section_home():
                 - 🤖 Exploring LLM apps, ML pipelines, and generative workflows
                 """
             )
-
             st.caption("**Core Technologies:**")
             st.markdown(
                 """
@@ -312,7 +254,6 @@ def section_home():
                 """,
                 unsafe_allow_html=True,
             )
-
             cta1, cta2 = st.columns([1, 1])
             with cta1:
                 st.button("📂 View Projects", use_container_width=True, on_click=go_projects)
@@ -326,6 +267,7 @@ def section_home():
         st.metric("🛠️ Projects", "5+")
     with m3:
         st.metric("🎓 Certifications", "3+")
+
 
 def section_about(query: str):
     content = (
