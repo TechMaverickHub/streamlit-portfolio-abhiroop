@@ -3,7 +3,7 @@ from typing import List
 
 import streamlit as st
 import streamlit.components.v1 as components
-
+import base64
 
 # -----------------------
 # Page & Theme Settings
@@ -204,7 +204,7 @@ def go_contact():
 # -----------------------
 
 
-def section_home():
+# def section_home():
     section_header("Home")
     hero = st.container(border=True)
     with hero:
@@ -212,10 +212,14 @@ def section_home():
 
         # Profile image
         with col_img:
-            profile_img_path = Path("assets\images\profile_picture.png")
+            profile_img_path = Path("assets/images/profile_picture.png")
             if profile_img_path.exists():
+                with open(profile_img_path, "rb") as image_file:
+                    encoded = base64.b64encode(image_file.read()).decode()
                 st.markdown(
-                    f"<img src='{profile_img_path.as_posix()}' style='width: 100%; max-width: 180px; border-radius: 50%; box-shadow: 0 4px 14px rgba(0,0,0,.12);' />",
+                    f"<img src='data:image/png;base64,{encoded}' "
+                    "style='width: 100%; max-width: 180px; border-radius: 50%;"
+                    "box-shadow: 0 4px 14px rgba(0,0,0,.12);' />",
                     unsafe_allow_html=True,
                 )
 
@@ -255,7 +259,73 @@ def section_home():
         st.metric("Projects", "5+")
     with m3:
         st.metric("Certifications", "3+")
+def section_home():
+    section_header("Home")
+    hero = st.container(border=True)
+    with hero:
+        col_img, col_text = st.columns([1, 2])
 
+        with col_img:
+            profile_img_path = Path("assets/images/profile_picture.png")
+            if profile_img_path.exists():
+                with open(profile_img_path, "rb") as image_file:
+                    encoded = base64.b64encode(image_file.read()).decode()
+                st.markdown(
+                    f"""
+                    <div style="display: flex; justify-content: center;">
+                        <img src="data:image/png;base64,{encoded}" 
+                        style="width:140px; height:140px; border-radius:50%; box-shadow:0 4px 14px rgba(0,0,0,.12); margin-bottom: 10px;" />
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+        with col_text:
+            st.markdown(
+                """
+                ## Abhiroop Bhattacharyya  
+                *Backend Developer → Applied ML & Data Science*  
+                """
+            )
+            st.write(
+                "I craft robust backend systems and build data-driven features powered by ML. I enjoy shipping reliable APIs, optimizing data flows, and applying AI pragmatically to real problems."
+            )
+
+            st.markdown(
+                """
+                #### Key Highlights  
+                - 🚀 Reduced API latency by 30% migrating Node.js → Django REST  
+                - 🗄️ Built RBAC, PostgreSQL/Mongo integrations, and S3-backed data workflows  
+                - 🤖 Exploring LLM apps, ML pipelines, and generative workflows
+                """
+            )
+
+            st.caption("**Core Technologies:**")
+            st.markdown(
+                """
+                <span style="background-color:#e5e5e5;padding:3px 10px;border-radius:6px;">Python</span>
+                <span style="background-color:#e5e5e5;padding:3px 10px;border-radius:6px;">Django</span>
+                <span style="background-color:#e5e5e5;padding:3px 10px;border-radius:6px;">REST APIs</span>
+                <span style="background-color:#e5e5e5;padding:3px 10px;border-radius:6px;">PostgreSQL</span>
+                <span style="background-color:#e5e5e5;padding:3px 10px;border-radius:6px;">Scikit-learn</span>
+                <span style="background-color:#e5e5e5;padding:3px 10px;border-radius:6px;">ETL</span>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            cta1, cta2 = st.columns([1, 1])
+            with cta1:
+                st.button("📂 View Projects", use_container_width=True, on_click=go_projects)
+            with cta2:
+                st.button("📬 Get in Touch", use_container_width=True, on_click=go_contact)
+
+    m1, m2, m3 = st.columns(3)
+    with m1:
+        st.metric("👨‍💻 Years Experience", "2+")
+    with m2:
+        st.metric("🛠️ Projects", "5+")
+    with m3:
+        st.metric("🎓 Certifications", "3+")
 
 def section_about(query: str):
     content = (
