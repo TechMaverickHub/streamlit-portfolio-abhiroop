@@ -115,19 +115,25 @@ def matches_query(text: str, query: str) -> bool:
     return query.lower() in text.lower()
 
 
-def render_card(title: str, body: str, tags: List[str] | None = None, links: List[tuple[str, str]] | None = None):
+def render_card(title, desc, tags, links, image=None, impact=None):
+    # Card display with image, tags, links, and impact
     with st.container(border=True):
+        if image:
+            st.image(image, use_container_width=True)
         st.markdown(f"**{title}**")
-        st.write(body)
-        if tags:
-            st.markdown(
-                " ".join([f"`{t}`" for t in tags])
-            )
-        if links:
-            cols = st.columns(len(links))
-            for idx, (label, url) in enumerate(links):
-                with cols[idx]:
-                    st.link_button(label, url)
+        st.write(desc)
+        tag_str = " ".join([
+            f"<span style='background:#21ba45;color:#fff;border-radius:6px;padding:2px 8px; margin-right:4px;'>{t}</span>"
+            for t in tags
+        ])
+        st.markdown(tag_str, unsafe_allow_html=True)
+        link_cols = st.columns(len(links))
+        for idx, (label, url) in enumerate(links):
+            with link_cols[idx]:
+                st.link_button(label, url)
+        if impact:
+            st.markdown(f"<b>Impact:</b> {impact}", unsafe_allow_html=True)
+
 
 
 # -----------------------
@@ -353,27 +359,32 @@ def section_skills(query: str):
 
 def section_projects(query: str):
     projects = [
-        {
-            "title": "Credit Risk Predictor",
-            "desc": "Streamlit app powered by XGBoost to predict credit default probability.",
-            "tags": ["XGBoost", "Streamlit", "ML"],
-            "links": [("Repo", "https://github.com/TechMaverickHub/credit-risk-predictor-streamlit")],
-        },
-        {
-            "title": "Mall Customer Segmentation",
-            "desc": "K-Means clustering with interactive visualizations to explore customer groups.",
-            "tags": ["K-Means", "Visualization", "Python"],
-            "links": [("Repo", "https://github.com/TechMaverickHub/Mall-Customer-Segmentation-using-K-Means-Clustering")],
-        },
-        {
-            "title": "100x-LLM-Week2 PDF Chatbot Frontend",
-            "desc": "Streamlit frontend for an interactive PDF chatbot powered by FastAPI backend.",
-            "tags": ["Streamlit", "FastAPI", "LLM"],
-            "links": [
-                ("Repo", "https://github.com/TechMaverickHub/100x-LLM-week2-pdf-chatbot-ui")
-            ],
-        }
+    {
+        "title": "Credit Risk Predictor",
+        "desc": "Streamlit app powered by XGBoost to predict credit default probability.",
+        "tags": ["XGBoost", "Streamlit", "ML"],
+        "links": [("Repo", "https://github.com/TechMaverickHub/credit-risk-predictor-streamlit")],
+        "image": "assets/images/credit_risk.jpg",
+        "impact": "Can be used by fintech clubs, educators, and data science learners for demo or analysis."
+    },
+    {
+        "title": "Mall Customer Segmentation",
+        "desc": "K-Means clustering with interactive visualizations to explore customer groups.",
+        "tags": ["K-Means", "Visualization", "Python"],
+        "links": [("Repo", "https://github.com/TechMaverickHub/Mall-Customer-Segmentation-using-K-Means-Clustering")],
+        "image": "assets/images/mall_customer.jpg",
+        "impact": "Can be used by marketing teams and students to visualize or analyze customer segments."
+    },
+    {
+        "title": "100x-LLM-Week2 PDF Chatbot Frontend",
+        "desc": "Streamlit frontend for an interactive PDF chatbot powered by FastAPI backend.",
+        "tags": ["Streamlit", "FastAPI", "LLM"],
+        "links": [("Repo", "https://github.com/TechMaverickHub/100x-LLM-week2-pdf-chatbot-ui")],
+        "image": "assets/images/pdf_chatbot.jpg",
+        "impact": "Can be used by product teams, students, or info workers needing fast PDF Q&A."
+    }
     ]
+
 
     # Filter by search query
     filtered = [
@@ -385,11 +396,14 @@ def section_projects(query: str):
     section_header("Projects", "Interactive showcases")
 
     # Responsive grid: 3 -> 2 -> 1
+    # Responsive grid: 3 -> 2 -> 1
     num_cols = 3
     cols = st.columns(num_cols)
     for idx, proj in enumerate(filtered):
         with cols[idx % num_cols]:
-            render_card(proj["title"], proj["desc"], proj["tags"], proj["links"])
+            render_card(
+                proj["title"], proj["desc"], proj["tags"], proj["links"], proj.get("image"), proj.get("impact")
+            )
 
 
 def section_experience(query: str):
